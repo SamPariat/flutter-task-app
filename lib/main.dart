@@ -21,9 +21,13 @@ class MyApp extends StatelessWidget {
           primary: Colors.teal,
           secondary: Colors.blue,
         ),
+        appBarTheme: const AppBarTheme(
+          color: Colors.teal,
+          foregroundColor: Colors.white,
+        ),
         useMaterial3: true,
       ),
-      initialRoute: '/auth',
+      initialRoute: '/home',
       routes: {
         '/auth': (ctx) => const LoginScreen(),
         '/home': (ctx) => const HomeScreen(),

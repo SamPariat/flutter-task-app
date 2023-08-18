@@ -1,12 +1,13 @@
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:http/http.dart' as http;
 
 import './user_interface.dart';
 import './user_response.dart';
 import '../exceptions/bad_request_exception.dart';
-import '../exceptions/user_not_found_exception.dart';
 import '../exceptions/internal_server_error_exception.dart';
 import '../exceptions/user_not_authenticated_exception.dart';
+import '../exceptions/user_not_found_exception.dart';
 
 class UserApi implements UserInterface {
   final String baseUrl = 'http://localhost:4040/users';
@@ -66,6 +67,7 @@ class UserApi implements UserInterface {
           baseUrl,
           '/logout',
         ),
+        headers: {},
       );
 
       if (response.statusCode == 401) {
