@@ -1,9 +1,8 @@
-import 'package:flutter_app/api/tasks/task.dart';
-
+import './task.dart';
 import './task_interface.dart';
 
 class TaskApi implements TaskInterface {
-  final String baseUrl = "http://localhost:4040/tasks/";
+  final String baseUrl = 'http://localhost:4040/tasks';
 
   @override
   Future<Task> createNewTask() {

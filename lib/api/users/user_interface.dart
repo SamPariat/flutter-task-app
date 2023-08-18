@@ -1,9 +1,9 @@
 import './user_response.dart';
 
 abstract class UserInterface {
-  Future<UserResponse> signup();
+  Future<UserResponse> signup(String email, String password);
 
-  Future<UserResponse> login();
+  Future<UserResponse> login(String email, String password);
 
   Future<void> logout();
 
