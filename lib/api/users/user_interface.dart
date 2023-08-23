@@ -1,9 +1,9 @@
-import './user_response.dart';
+import '../../models/user_response.dart';
 
 abstract class UserInterface {
   Future<UserResponse> signup(String email, String password);
 
-  Future<UserResponse> login(String email, String password);
+  Future<Map<String, dynamic>> login(String email, String password);
 
   Future<void> logout();
 

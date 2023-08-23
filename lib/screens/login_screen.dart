@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../api/users/user_api.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -9,12 +11,11 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-
   bool isLogin = true;
-
   late TextEditingController? _nameController;
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
+  final _userApi = UserApi();
 
   @override
   void initState() {
@@ -67,7 +68,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 15,
               ),
               FilledButton(
-                onPressed: () async {},
+                onPressed: () async {
+                  final response = await _userApi.login(
+                    _emailController.text,
+                    _passwordController.text,
+                  );
+                  print(response);
+                },
                 child: Text(isLogin ? 'Login' : 'Sign up'),
               ),
               const SizedBox(

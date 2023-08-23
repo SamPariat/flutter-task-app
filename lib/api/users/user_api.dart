@@ -3,14 +3,15 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import './user_interface.dart';
-import './user_response.dart';
-import '../exceptions/bad_request_exception.dart';
-import '../exceptions/internal_server_error_exception.dart';
-import '../exceptions/user_not_authenticated_exception.dart';
-import '../exceptions/user_not_found_exception.dart';
+import '../../models/user_response.dart';
+import '../../services/storage_services.dart';
+import '../../exceptions/bad_request_exception.dart';
+import '../../exceptions/internal_server_error_exception.dart';
+import '../../exceptions/user_not_authenticated_exception.dart';
+import '../../exceptions/user_not_found_exception.dart';
 
 class UserApi implements UserInterface {
-  final String baseUrl = 'http://localhost:4040/users';
+  final String baseUrl = 'nodejs-task-manager-ll2c.onrender.com';
 
   @override
   Future<UserResponse> deleteAccount() async {
@@ -31,16 +32,13 @@ class UserApi implements UserInterface {
   }
 
   @override
-  Future<UserResponse> login(String email, String password) async {
+  Future<Map<String, dynamic>> login(String email, String password) async {
     try {
       final response = await http.post(
-        Uri.http(
-          baseUrl,
-          '/login',
-        ),
-        body: json.encode({
-          email: email,
-          password: password,
+        Uri.https(baseUrl, 'users/login'),
+        body: jsonEncode({
+          'email': email,
+          'password': password,
         }),
         headers: {
           'Content-Type': 'application/json',
@@ -51,7 +49,12 @@ class UserApi implements UserInterface {
         throw UserNotFoundException('Invalid body');
       }
 
-      return json.decode(response.body);
+      final responseData = jsonDecode(response.body);
+      final token = responseData['token'];
+
+      await StorageServices.setValue('auth_token', token);
+
+      return jsonDecode(response.body);
     } on UserNotFoundException catch (unfe) {
       return Future.error(unfe.message);
     } catch (e) {
@@ -67,7 +70,9 @@ class UserApi implements UserInterface {
           baseUrl,
           '/logout',
         ),
-        headers: {},
+        headers: {
+          'Content-Type': 'application/json',
+        },
       );
 
       if (response.statusCode == 401) {
@@ -76,7 +81,7 @@ class UserApi implements UserInterface {
         throw InternalServerErrorException('Server error');
       }
 
-      return json.decode(response.body);
+      return jsonDecode(response.body);
     } on UserNotAuthenticatedException catch (unae) {
       return Future.error(unae.message);
     } on InternalServerErrorException catch (isee) {
@@ -97,9 +102,9 @@ class UserApi implements UserInterface {
     try {
       final response = await http.post(
         Uri.http(baseUrl),
-        body: json.encode({
-          email: email,
-          password: password,
+        body: jsonEncode({
+          'email': email,
+          'password': password,
         }),
       );
 
@@ -107,7 +112,7 @@ class UserApi implements UserInterface {
         throw BadRequestException('Bad request');
       }
 
-      return json.decode(response.body);
+      return jsonDecode(response.body);
     } on BadRequestException catch (bre) {
       return Future.error(bre.message);
     } catch (e) {
